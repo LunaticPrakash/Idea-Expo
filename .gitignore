@@ -1,0 +1,16 @@
+## Common (Backend + Frontend)
+**/*.log
+.vscode/
+
+## Backend
+
+# virtual environment
+**/.venv
+
+## Frontend
+
+# installation folders
+**/node_modules
+
+
+
