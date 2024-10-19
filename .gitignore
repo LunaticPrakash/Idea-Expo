@@ -1,8 +1,16 @@
 ## Common (Backend + Frontend)
 **/*.log
-.vscode/
+**/.vscode/
+**/.idea
+**/*.iws
+**/*.iml
+**/*.ipr
 
 ## Backend
+**/target/
+!**/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 # virtual environment
 **/.venv
