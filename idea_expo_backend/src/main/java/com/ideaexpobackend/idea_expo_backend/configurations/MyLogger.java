@@ -28,16 +28,19 @@ public class MyLogger {
 
     @Bean
     public String configureCustomLoggers() {
-        configureCustomLogger(MYAPP_LOGGER, Level.DEBUG, CONSOLE_LOG_PATTERN, FILE_LOG_PATTERN, MYAPP_LOG_PATH);
-        configureCustomLogger(HIBERNATE_LOGGER, Level.DEBUG, CONSOLE_LOG_PATTERN, FILE_LOG_PATTERN, HIBERNATE_LOG_PATH);
+        configureCustomLogger(MYAPP_LOGGER, Level.DEBUG, CONSOLE_LOG_PATTERN, FILE_LOG_PATTERN, MYAPP_LOG_PATH, "_%d{dd-MMM-yyyy}_%i.log.gz", "500MB", "10GB", 30);
+        configureCustomLogger(HIBERNATE_LOGGER, Level.DEBUG, CONSOLE_LOG_PATTERN, FILE_LOG_PATTERN, HIBERNATE_LOG_PATH,"_%d{dd-MMM-yyyy}_%i.log.gz", "500MB", "10GB", 30);
         return "Loggers Configured";
     }
 
-    public void configureCustomLogger(String loggerName, Level logLevel, String consolePattern, String filePattern, String filePath) {
+    public void configureCustomLogger(String loggerName, Level logLevel, String consolePattern, String filePattern, String filePath, String rollingFileSuffix, String maxSingleLogFileSize, String maxTotalArchiveFileSize, int archiveRetentionDurationInDays) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         ConsoleAppender<ILoggingEvent> consoleAppender = createConsoleAppender(context, consolePattern);
         RollingFileAppender<ILoggingEvent> fileAppender = createFileAppender(context, filePattern, filePath);
+
+        SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = createRollingPolicy(context, fileAppender, filePath, rollingFileSuffix, maxSingleLogFileSize, maxTotalArchiveFileSize, archiveRetentionDurationInDays);
+        fileAppender.setRollingPolicy(rollingPolicy);
 
         Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
         logger.setLevel(logLevel);
@@ -61,9 +64,6 @@ public class MyLogger {
         fileAppender.setContext(context);
         fileAppender.setFile(filePath);
 
-        SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = createRollingPolicy(context, fileAppender, filePath);
-        fileAppender.setRollingPolicy(rollingPolicy);
-
         fileAppender.setEncoder(createEncoder(context, pattern));
         fileAppender.start();
         return fileAppender;
@@ -77,14 +77,14 @@ public class MyLogger {
         return encoder;
     }
 
-    private SizeAndTimeBasedRollingPolicy<ILoggingEvent> createRollingPolicy(LoggerContext context, RollingFileAppender<ILoggingEvent> fileAppender, String filePath) {
+    private SizeAndTimeBasedRollingPolicy<ILoggingEvent> createRollingPolicy(LoggerContext context, RollingFileAppender<ILoggingEvent> fileAppender, String filePath, String rollingFileSuffix, String maxSingleLogFileSize, String maxTotalArchiveFileSize, int archiveRetentionDurationInDays) {
         SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
         rollingPolicy.setContext(context);
         rollingPolicy.setParent(fileAppender);
-        rollingPolicy.setFileNamePattern(filePath + "_%d{dd-MMM-yyyy}_%i.log.gz");
-        rollingPolicy.setMaxFileSize(FileSize.valueOf("100MB"));
-        rollingPolicy.setMaxHistory(30);
-        rollingPolicy.setTotalSizeCap(FileSize.valueOf("5GB"));
+        rollingPolicy.setFileNamePattern(filePath + rollingFileSuffix);
+        rollingPolicy.setMaxFileSize(FileSize.valueOf(maxSingleLogFileSize));
+        rollingPolicy.setTotalSizeCap(FileSize.valueOf(maxTotalArchiveFileSize));
+        rollingPolicy.setMaxHistory(archiveRetentionDurationInDays);
         rollingPolicy.start();
         return rollingPolicy;
     }
