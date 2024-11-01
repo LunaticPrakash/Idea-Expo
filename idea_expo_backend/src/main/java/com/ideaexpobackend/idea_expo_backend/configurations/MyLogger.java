@@ -40,7 +40,9 @@ public class MyLogger {
         RollingFileAppender<ILoggingEvent> fileAppender = createFileAppender(context, filePattern, filePath);
 
         SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = createRollingPolicy(context, fileAppender, filePath, rollingFileSuffix, maxSingleLogFileSize, maxTotalArchiveFileSize, archiveRetentionDurationInDays);
+        rollingPolicy.start();
         fileAppender.setRollingPolicy(rollingPolicy);
+        fileAppender.start();
 
         Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
         logger.setLevel(logLevel);
