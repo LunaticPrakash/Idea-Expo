@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger("com.ideaexpobackend");
 
     public UserController(UserService userService) {
         this.userService = userService;

@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.info("doFilterInternal() execution started for request {}:{}", request.getMethod(), request.getRequestURI());
+        logger.info("doFilterInternal() execution started with request - {}", request.getRequestURI());
         final String authorizationHeader = request.getHeader("Authorization");
         String userEmail = null;
         String jwtToken = null;
@@ -41,8 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.info("JWT Token: {}", jwtToken);
             try {
                 userEmail = jwtService.extractUsernameFromToken(jwtToken);
+                logger.info("Extracted user email from JWT Token: {}", userEmail);
             } catch (Exception e) {
-                logger.error("Error processing JWT Token", e);
+                logger.error("Error processing JWT Token: {}", e.toString());
             }
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

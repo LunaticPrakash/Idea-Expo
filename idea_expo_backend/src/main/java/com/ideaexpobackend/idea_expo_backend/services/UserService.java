@@ -1,5 +1,6 @@
 package com.ideaexpobackend.idea_expo_backend.services;
 
+import com.ideaexpobackend.idea_expo_backend.annotations.LogMethodExecutionTime;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadCredentialsException;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadRequestException;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomRuntimeException;
@@ -39,10 +40,10 @@ public class UserService{
         this.userDetailsService = userDetailsService;
     }
 
+    @LogMethodExecutionTime
     public User registerUser(User user) throws Exception {
-        logger.info("registerUser() execution started with user: {}.", user);
         if(user == null){
-            throw new Exception("User can't be null.");
+            throw new Exception("User can't be null");
         }
         Map<String, String> fieldsMap = new HashMap<>();
         fieldsMap.put("First Name", user.getFirstName());
@@ -61,19 +62,17 @@ public class UserService{
 
         User alreadyExistingUser = this.userRepository.findByEmail(user.getEmail());
         if(alreadyExistingUser != null){
-            logger.error("Failed in saving user details. ERROR: User already exists.");
-            throw new Exception("User already exists.");
+            logger.error("Failed in saving user details. ERROR: User already exists");
+            throw new Exception("User already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        logger.info("Trying to save user data in database.");
         User registeredUser = userRepository.save(user);
-        logger.info("registerUser() execution completed. Registered User: {}.", registeredUser);
         return  registeredUser;
 
     }
 
+    @LogMethodExecutionTime
     public LoginResponse loginUser(String email, String password){
-        logger.info("loginUser() execution started with email: {}, password: {}.", email, password);
         Map<String, String> fieldsMap = new HashMap<>();
         fieldsMap.put("Email", email);
         fieldsMap.put("Password", password);
@@ -83,17 +82,17 @@ public class UserService{
             throw new CustomBadRequestException(nullAndEmptyFieldValidatorResponse);
         }
         try {
-            logger.info("Trying to authenticate user.");
+            logger.info("Trying to authenticate user");
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            logger.info("Authentication successful.");
+            logger.info("Authentication successful");
         } catch (DisabledException e) {
-            logger.error("Authentication failed with exception : {}\n{}.", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            logger.error("Authentication failed with exception: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
             throw new DisabledException(e.getMessage());
         } catch (BadCredentialsException e) {
-            logger.error("Authentication failed with exception : {}\n{}.", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            logger.error("Authentication failed with exception: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
             throw new CustomBadCredentialsException(e.getMessage());
         } catch (RuntimeException e) {
-            logger.error("Authentication failed with exception : {}\n{}.", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            logger.error("Authentication failed with exception: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
             throw new CustomRuntimeException(e.getMessage());
         }
 
@@ -101,27 +100,26 @@ public class UserService{
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
 
-        logger.info("loginUser() execution completed. Current Logged in User: {}.", user);
+        logger.info("Current Logged in User: {}", user.getEmail());
         return new LoginResponse(accessToken, refreshToken);
     }
 
+    @LogMethodExecutionTime
     public User getUser(Long userId) throws Exception {
-        logger.info("getUser() execution started with userId: {}.", userId);
         Optional<User> userOptional = this.userRepository.findById(userId);
         if(userOptional.isPresent()){
             User user = userOptional.get();
-            logger.info("getUser() execution completed. Found User : {}.", user);
             return user ;
         }
-        throw new Exception("User with ID: " + userId + "doesn't exist.");
+        throw new Exception("User with ID: " + userId + " doesn't exist");
     }
 
+    @LogMethodExecutionTime
     private String passwordValidator(String password) {
-        logger.info("passwordValidator() execution started with password: {}", password);
         StringBuilder response = new StringBuilder();
 
         if (password == null || password.length() <= 8) {
-            response.append("Password must be more than 8 characters long.");
+            response.append("Password must be more than 8 characters long");
         } else {
             boolean hasLower = false;
             boolean hasUpper = false;
@@ -139,15 +137,14 @@ public class UserService{
                 }
             }
             if (!hasLower || !hasUpper || !hasDigit || !hasSpecial) {
-                response.append("Password must contain at least one lowercase, one uppercase, one digit and one special character.");
+                response.append("Password must contain at least one lowercase, one uppercase, one digit and one special character");
             }
         }
-        logger.info("passwordValidator() execution completed with response: {}", response);
         return response.toString();
     }
 
+    @LogMethodExecutionTime
     private String nullAndEmptyFieldValidator(Map<String, String> fieldsMap) {
-        logger.info("nullAndEmptyFieldValidator() execution started with fieldsMap: {}", fieldsMap.toString());
         StringBuilder response = new StringBuilder();
         for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
             if (entry.getValue() == null || entry.getValue().isBlank()) {
@@ -158,7 +155,6 @@ public class UserService{
             response.delete(response.length() - 2, response.length());
             response.append(" can't be null");
         }
-        logger.info("nullAndEmptyFieldValidator() execution completed with response: {}", response);
         return response.toString();
     }
 }
