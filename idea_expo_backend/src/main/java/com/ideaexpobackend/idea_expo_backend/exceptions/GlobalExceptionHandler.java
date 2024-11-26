@@ -1,6 +1,5 @@
 package com.ideaexpobackend.idea_expo_backend.exceptions;
 
-import com.ideaexpobackend.idea_expo_backend.models.ErrorDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

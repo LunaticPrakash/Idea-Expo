@@ -1,6 +1,4 @@
-package com.ideaexpobackend.idea_expo_backend.models;
-
-import java.util.Date;
+package com.ideaexpobackend.idea_expo_backend.exceptions;
 
 public class ErrorDetails {
 
