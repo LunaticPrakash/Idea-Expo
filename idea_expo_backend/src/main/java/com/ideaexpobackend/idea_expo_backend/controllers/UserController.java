@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +35,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.getUser_id")
     public ResponseEntity<User> getUser(@PathVariable Long userId) throws Exception {
         User user = this.userService.getUser(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
