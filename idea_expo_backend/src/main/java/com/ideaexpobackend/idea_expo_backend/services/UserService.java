@@ -5,7 +5,9 @@ import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadCredentialsExce
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadRequestException;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomRuntimeException;
 import com.ideaexpobackend.idea_expo_backend.models.LoginResponse;
+import com.ideaexpobackend.idea_expo_backend.models.Role;
 import com.ideaexpobackend.idea_expo_backend.models.User;
+import com.ideaexpobackend.idea_expo_backend.repositories.RoleRepository;
 import com.ideaexpobackend.idea_expo_backend.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +18,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService{
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -32,8 +32,9 @@ public class UserService{
 
     private static final Logger logger = LoggerFactory.getLogger("com.ideaexpobackend");
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
@@ -66,6 +67,12 @@ public class UserService{
             throw new Exception("User already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        Set<Role> userRoles = new HashSet<>();
+        Role role = roleRepository.findById("USER").isPresent() ? roleRepository.findById("USER").get() : null;
+        userRoles.add(role);
+        user.setRoles(userRoles);
+
         User registeredUser = userRepository.save(user);
         return  registeredUser;
 
