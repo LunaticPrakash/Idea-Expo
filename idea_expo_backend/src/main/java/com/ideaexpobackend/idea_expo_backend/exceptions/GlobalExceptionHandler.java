@@ -34,19 +34,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, statusCode);
     }
 
-    @ExceptionHandler(CustomRuntimeException.class)
-    public ResponseEntity<ErrorDetails> handleCustomRuntimeException(CustomRuntimeException ex, WebRequest request) {
-        String stackTrace = Objects.equals(activeProfile, "dev") ? Arrays.toString(ex.getStackTrace()) : "Not Available in Non-DEV environment";
-        HttpStatus statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-        ErrorDetails errorDetails = new ErrorDetails(new Date().toString(), ex.getMessage(), request.getDescription(true), stackTrace, statusCode.value());
-        return new ResponseEntity<>(errorDetails, statusCode);
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         String stackTrace = Objects.equals(activeProfile, "dev") ? Arrays.toString(ex.getStackTrace()) : "Not Available in Non-DEV environment";
         HttpStatus statusCode = HttpStatus.FORBIDDEN;
         ErrorDetails errorDetails = new ErrorDetails(new Date().toString(), ex.getMessage(), request.getDescription(false), stackTrace, statusCode.value());
+        return new ResponseEntity<>(errorDetails, statusCode);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDetails> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        String stackTrace = Objects.equals(activeProfile, "dev") ? Arrays.toString(ex.getStackTrace()) : "Not Available in Non-DEV environment";
+        HttpStatus statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        ErrorDetails errorDetails = new ErrorDetails(new Date().toString(), ex.getMessage(), request.getDescription(true), stackTrace, statusCode.value());
         return new ResponseEntity<>(errorDetails, statusCode);
     }
 }
