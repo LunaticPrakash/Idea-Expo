@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -23,10 +25,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger("com.ideaexpobackend");
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtService jwtService;
+    private final HandlerExceptionResolver resolver;
 
-    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService, JwtService jwtService) {
+    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService, JwtService jwtService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
+        this.resolver = resolver;
     }
 
     @Override
@@ -44,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.info("Extracted user email from JWT Token: {}", userEmail);
             } catch (Exception e) {
                 logger.error("Error processing JWT Token: {}", e.toString());
+                resolver.resolveException(request, response, null, e);
             }
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
