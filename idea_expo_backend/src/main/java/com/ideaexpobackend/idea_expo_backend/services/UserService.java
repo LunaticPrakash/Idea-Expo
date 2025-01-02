@@ -88,7 +88,6 @@ public class UserService{
             throw new CustomBadRequestException(nullAndEmptyFieldValidatorResponse);
         }
         try {
-            int a = 2/0;
             logger.info("Trying to authenticate user");
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             logger.info("Authentication successful");
