@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, statusCode);
     }
 
-    @ExceptionHandler(CustomRuntimeException.class)
-    public ResponseEntity<ErrorDetails> handleCustomRuntimeException(CustomRuntimeException ex, WebRequest request) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDetails> handleCustomRuntimeException(RuntimeException ex, WebRequest request) {
         String stackTrace = Objects.equals(activeProfile, "dev") ? Arrays.toString(ex.getStackTrace()) : "Not Available in Non-DEV environment";
         HttpStatus statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorDetails errorDetails = new ErrorDetails(new Date().toString(), ex.getMessage(), request.getDescription(true), stackTrace, statusCode.value());

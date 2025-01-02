@@ -3,7 +3,6 @@ package com.ideaexpobackend.idea_expo_backend.services;
 import com.ideaexpobackend.idea_expo_backend.annotations.LogMethodExecutionTime;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadCredentialsException;
 import com.ideaexpobackend.idea_expo_backend.exceptions.CustomBadRequestException;
-import com.ideaexpobackend.idea_expo_backend.exceptions.CustomRuntimeException;
 import com.ideaexpobackend.idea_expo_backend.models.LoginResponse;
 import com.ideaexpobackend.idea_expo_backend.models.Role;
 import com.ideaexpobackend.idea_expo_backend.models.User;
@@ -100,7 +99,7 @@ public class UserService{
             throw new CustomBadCredentialsException(e.getMessage());
         } catch (RuntimeException e) {
             logger.error("Authentication failed with exception: {}\n{}", e.getMessage(), Arrays.toString(e.getStackTrace()));
-            throw new CustomRuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
         User user = userDetailsService.loadUserByUsername(email);
