@@ -104,7 +104,7 @@ public class User implements UserDetails {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        this.roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRoleId())));
+        this.roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleId())));
         return authorities;
     }
 
