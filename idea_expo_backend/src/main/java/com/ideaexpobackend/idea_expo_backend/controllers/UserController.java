@@ -35,9 +35,16 @@ public class UserController {
     }
 
     @GetMapping(value = "/user/{userId}")
-    @PreAuthorize("#userId == authentication.principal.getUser_id")
+    @PreAuthorize("#userId == authentication.principal.getUserId")
     public ResponseEntity<User> getUser(@PathVariable Long userId) throws Exception {
         User user = this.userService.getUser(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.getUserId OR hasRole('ADMIN')")
+    public ResponseEntity<User> updateUser(@RequestBody User user) throws Exception {
+        User updatedUser = this.userService.updateUser(user);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 }

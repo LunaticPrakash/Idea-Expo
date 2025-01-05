@@ -121,6 +121,44 @@ public class UserService{
     }
 
     @LogMethodExecutionTime
+    public User updateUser(User user) throws Exception{
+        Optional<User> foundUser = userRepository.findById(user.getUserId());
+        if(foundUser.isEmpty()){
+            throw new CustomBadRequestException("User doesn't exist.");
+        }
+        if(user.getFirstName().trim().length() != 0)
+            foundUser.get().setFirstName(user.getFirstName());
+        if(user.getLastName().trim().length() != 0)
+            foundUser.get().setLastName(user.getLastName());
+        if(user.getEmail().trim().length() != 0)
+            foundUser.get().setEmail(user.getEmail());
+        if(user.getPassword().trim().length() != 0)
+            foundUser.get().setPassword(user.getPassword());
+        if(user.getRoles().size() != 0)
+            foundUser.get().setRoles(user.getRoles());
+
+        Map<String, String> fieldsMap = new HashMap<>();
+        fieldsMap.put("First Name", foundUser.get().getFirstName());
+        fieldsMap.put("Email", foundUser.get().getEmail());
+        fieldsMap.put("Password", foundUser.get().getPassword());
+        String nullAndEmptyFieldValidatorResponse = nullAndEmptyFieldValidator(fieldsMap);
+        String passwordValidatorResponse = passwordValidator(user.getPassword());
+
+        if(nullAndEmptyFieldValidatorResponse.length() > 0){
+            throw new Exception(nullAndEmptyFieldValidatorResponse);
+        }
+
+        if(passwordValidatorResponse.length() > 0){
+            throw new Exception(passwordValidatorResponse);
+        }
+        if(user.getPassword().trim().length() != 0)
+            foundUser.get().setPassword(passwordEncoder.encode(foundUser.get().getPassword()));
+
+        User updatedUser = userRepository.save(user);
+        return  updatedUser;
+    }
+
+    @LogMethodExecutionTime
     private String passwordValidator(String password) {
         StringBuilder response = new StringBuilder();
 

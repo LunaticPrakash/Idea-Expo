@@ -26,7 +26,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "first_name", length = 256, nullable = false)
     private String firstName;
@@ -51,12 +51,12 @@ public class User implements UserDetails {
     )
     public Set<Role> roles;
 
-    public Long getUser_id() {
-        return this.user_id;
+    public Long getUserId() {
+        return this.userId;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -116,7 +116,7 @@ public class User implements UserDetails {
     @Override
     public String toString() {
         return "User{" +
-                "user_id=" + user_id +
+                "user_id=" + userId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
