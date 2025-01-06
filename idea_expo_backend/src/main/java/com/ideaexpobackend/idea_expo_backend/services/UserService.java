@@ -124,7 +124,7 @@ public class UserService{
     public User updateUser(User user) throws Exception{
         Optional<User> foundUser = userRepository.findById(user.getUserId());
         if(foundUser.isEmpty()){
-            throw new CustomBadRequestException("User doesn't exist.");
+            throw new CustomBadRequestException("User doesn't exist");
         }
         if(user.getFirstName().trim().length() != 0)
             foundUser.get().setFirstName(user.getFirstName());
@@ -156,6 +156,16 @@ public class UserService{
 
         User updatedUser = userRepository.save(user);
         return  updatedUser;
+    }
+
+    @LogMethodExecutionTime
+    public boolean deleteUser(Long userId) throws Exception {
+        Optional<User> foundUser = userRepository.findById(userId);
+        if (foundUser.isEmpty()) {
+            throw new CustomBadRequestException("User doesn't exist");
+        }
+        userRepository.delete(foundUser.get());
+        return true;
     }
 
     @LogMethodExecutionTime

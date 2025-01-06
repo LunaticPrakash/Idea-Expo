@@ -47,4 +47,11 @@ public class UserController {
         User updatedUser = this.userService.updateUser(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/user/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Boolean> deleteUser(@PathVariable Long userId) throws Exception {
+        boolean isDeleted = this.userService.deleteUser(userId);
+        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+    }
 }
