@@ -73,6 +73,7 @@ public class UserService{
         user.setRoles(userRoles);
 
         User registeredUser = userRepository.save(user);
+        logger.info("User registered successfully: {}",registeredUser.toString());
         return  registeredUser;
 
     }
@@ -106,7 +107,7 @@ public class UserService{
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
 
-        logger.info("Current Logged in User: {}", user.getEmail());
+        logger.info("User logged in successfully: {}", user.getEmail());
         return new LoginResponse(accessToken, refreshToken);
     }
 
@@ -115,6 +116,7 @@ public class UserService{
         Optional<User> userOptional = this.userRepository.findById(userId);
         if(userOptional.isPresent()){
             User user = userOptional.get();
+            logger.info("User found successfully: {}",user.toString());
             return user ;
         }
         throw new Exception("User with ID: " + userId + " doesn't exist");
@@ -155,6 +157,7 @@ public class UserService{
             foundUser.get().setPassword(passwordEncoder.encode(foundUser.get().getPassword()));
 
         User updatedUser = userRepository.save(user);
+        logger.info("User updated successfully: {}",updatedUser.toString());
         return  updatedUser;
     }
 
@@ -165,6 +168,7 @@ public class UserService{
             throw new CustomBadRequestException("User doesn't exist");
         }
         userRepository.delete(foundUser.get());
+        logger.info("User deleted successfully: {}", userId);
         return true;
     }
 
@@ -194,6 +198,7 @@ public class UserService{
                 response.append("Password must contain at least one lowercase, one uppercase, one digit and one special character");
             }
         }
+        logger.info("response: {}", response.toString());
         return response.toString();
     }
 
@@ -209,6 +214,7 @@ public class UserService{
             response.delete(response.length() - 2, response.length());
             response.append(" can't be null");
         }
+        logger.info("response: {}", response.toString());
         return response.toString();
     }
 }

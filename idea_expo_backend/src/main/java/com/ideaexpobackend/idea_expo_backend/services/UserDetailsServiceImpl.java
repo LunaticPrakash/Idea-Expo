@@ -2,7 +2,6 @@ package com.ideaexpobackend.idea_expo_backend.services;
 
 import com.ideaexpobackend.idea_expo_backend.models.User;
 import com.ideaexpobackend.idea_expo_backend.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
