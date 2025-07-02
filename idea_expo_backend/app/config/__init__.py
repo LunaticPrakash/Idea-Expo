@@ -1,4 +1,4 @@
-from config import DEVConfig, QAConfig, PRODConfig
+from .config import DEVConfig, QAConfig, PRODConfig
 
 def get_config(env:str):
     if env == "DEV":
