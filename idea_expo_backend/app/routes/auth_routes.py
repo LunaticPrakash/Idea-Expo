@@ -1,25 +1,28 @@
 from flask import request, jsonify
-from ..db import db
-from ..db.models import User
+from ..services.auth_services import register_user_service, login_user_service
+
 def register_auth_routes(app):
-    
-    @app.route(rule="/api/auth/register",methods=["POST"])
+
+    @app.route(rule="/api/auth/register", methods=["POST"])
     def register_user():
         req_body = request.json
-        first_name = req_body.get('first_name')
-        last_name = req_body.get('last_name')
-        email = req_body.get('email')
-        password = req_body.get('password')
+        first_name = req_body.get('first_name', None)
+        last_name = req_body.get('last_name', None)
+        email = req_body.get('email', None)
+        password = req_body.get('password', None)
 
-        if User.query.filter_by(email=email).first():
-            return jsonify({"error": "Email already registered"}), 409
-        user = User(first_name, last_name, email, password)
-        db.session.add(user)
-        db.session.commit()
+        user = register_user_service(first_name, last_name, email, password)
+        response = jsonify({
+            "data": user.to_dict(),
+            "message": "User has been registered successfully"
+        })
+        response.status_code = 201
+        return response
 
-        return jsonify({"message": "User registered successfully"}), 201
-
-    @app.route(rule="/api/auth/login",methods=["POST"])
+    @app.route(rule="/api/auth/login", methods=["POST"])
     def login_user():
         req_body = request.json
-        return jsonify(req_body)
+        email = req_body.get('email', None)
+        password = req_body.get('password', None)
+        data = login_user_service(email, password)
+        return jsonify(data)

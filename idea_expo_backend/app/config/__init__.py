@@ -1,11 +1,10 @@
-from .config import DEVConfig, QAConfig, PRODConfig
+from .config import DevConfig, QaConfig, ProdConfig
+
 
 def get_config(env:str):
     if env == "DEV":
-        return DEVConfig
+        return DevConfig
     elif env == "QA":
-        return QAConfig
+        return QaConfig
     elif env == "PROD":
-        return PRODConfig
-    return None
-
+        return ProdConfig

@@ -1,12 +1,26 @@
 from flask import Flask
-from .config import get_config
 from .db import db
-from .db.models import *
 from .routes import register_routes
+from .config import get_config
+import logging
+from .exceptions import register_error_handlers
+from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
+
+env = "DEV"
+jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(get_config(env="DEV"))
+    app.config.from_object(get_config(env=env))
+    logging.info(f"Loaded the {env} config")
     db.init_app(app)
+    migrate = Migrate(app, db)
+    logging.info(f"Flask Migrate has been setup successfully")
+    jwt.init_app(app)
+    logging.info(f"Flask JWT Extended has been setup successfully")
     register_routes(app)
+    logging.info(f"Routes are registered successfully")
+    register_error_handlers(app)
+    logging.info(f"Error handlers are registered successfully")
     return app

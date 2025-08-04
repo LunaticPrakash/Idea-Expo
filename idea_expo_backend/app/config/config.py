@@ -1,29 +1,20 @@
 class BaseConfig:
 
     # Database
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///idea_expo_db.sqlite3"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Role based authorization
-    RBAC_RULES = {
-    '/api/admin/*': ['admin'],
-    '/api/user/': ['user', 'admin'],
-}
+    # jwt
+    JWT_SECRET_KEY = "IdeaExpo123"
+    JWT_ACCESS_TOKEN_EXPIRES = 3600  # 1 hour in seconds
+    JWT_REFRESH_TOKEN_EXPIRES = 2592000 # 30 days in seconds
 
-class DEVConfig(BaseConfig):
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+class DevConfig(BaseConfig):
+    pass
 
-class QAConfig(BaseConfig):
+class QaConfig(BaseConfig):
+    pass
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-class PRODConfig(BaseConfig):
-
-    # Database
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+class ProdConfig(BaseConfig):
+    pass

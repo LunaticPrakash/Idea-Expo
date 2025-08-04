@@ -2,11 +2,14 @@ from .. import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
+
+    __tablename__ = 'users'
+
+    user_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(50))
-    email = db.Column(db.String(80), nullable=False, unique = True)
-    password = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80))
+    email = db.Column(db.String(80), nullable=False, unique=True)
+    password = db.Column(db.String(256), nullable=False)
 
     def __init__(self, first_name, last_name, email, password) -> None:
         self.first_name = first_name
@@ -15,8 +18,15 @@ class User(db.Model):
         self.password = self.set_password(password)
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        return generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+
+    def to_dict(self):
+            return {
+                "user_id": self.user_id,
+                "first_name": self.first_name,
+                "last_name": self.last_name,
+                "email": self.email
+            }
