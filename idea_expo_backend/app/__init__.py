@@ -21,6 +21,6 @@ def create_app():
     logging.info(f"Flask JWT Extended has been setup successfully")
     register_routes(app)
     logging.info(f"Routes are registered successfully")
-    register_error_handlers(app)
+    register_error_handlers(app, jwt)
     logging.info(f"Error handlers are registered successfully")
     return app

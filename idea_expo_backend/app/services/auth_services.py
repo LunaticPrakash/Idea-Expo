@@ -1,5 +1,5 @@
 from ..db.models import User
-from ..exceptions.auth_exception import UserAlreadyExistException, UserNotFoundException, InvalidCredentialException
+from ..exceptions.user_exception import UserAlreadyExistException, UserNotFoundException, InvalidCredentialException
 from ..exceptions.base_exception import BaseException
 from ..db import db
 import logging
