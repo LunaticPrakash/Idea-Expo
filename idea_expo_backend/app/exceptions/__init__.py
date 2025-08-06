@@ -5,7 +5,7 @@ from .jwt_exception_handler import register_jwt_error_handlers
 
 def register_error_handlers(app, jwt):
 
-    register_jwt_error_handlers(app, jwt)
+    # register_jwt_error_handlers(app, jwt)
 
     @app.errorhandler(BaseException)
     def handle_app_exception(error):
@@ -21,6 +21,16 @@ def register_error_handlers(app, jwt):
                 "type": "BadRequest"
             })
         response.status_code = HTTPStatus.BAD_REQUEST
+        return response
+
+    @app.errorhandler(404)
+    def not_found_error(e):
+        response = jsonify({
+            "error": "The requested URL was not found on the server.",
+            "status_code": HTTPStatus.NOT_FOUND,
+            "type": "NotFoundException"
+        })
+        response.status_code = HTTPStatus.NOT_FOUND
         return response
 
     @app.errorhandler(405)

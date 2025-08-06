@@ -5,7 +5,6 @@ from ..db import db
 import logging
 from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import timedelta
-from ..config import get_config
 from flask import current_app
 
 def register_user_service(first_name, last_name, email, password):
@@ -33,20 +32,13 @@ def login_user_service(email, password):
         logging.warning(f"Login attempt failed for email: {email} - Invalid credentials.")
         raise InvalidCredentialException()
 
-    identity_claims = {
-        "user_id": user.user_id,
-        "email": user.email,
-    }
-
     access_token = create_access_token(
-        identity=user.user_id,
-        expires_delta=timedelta(seconds=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"]),
-        additional_claims=identity_claims
+        identity=str(user.user_id),
+        expires_delta=timedelta(seconds=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"])
     )
     refresh_token = create_refresh_token(
-        identity=user.user_id,
-        expires_delta=timedelta(seconds=current_app.config["JWT_REFRESH_TOKEN_EXPIRES"]),
-        additional_claims=identity_claims
+        identity=str(user.user_id),
+        expires_delta=timedelta(seconds=current_app.config["JWT_REFRESH_TOKEN_EXPIRES"])
     )
 
     logging.info(f"User {user.email} logged in successfully.")
