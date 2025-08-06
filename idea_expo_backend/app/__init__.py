@@ -6,6 +6,7 @@ import logging
 from .exceptions import register_error_handlers
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from .config.auth_config import register_security_matcher
 
 env = "DEV"
 jwt = JWTManager()
@@ -19,8 +20,10 @@ def create_app():
     logging.info(f"Flask Migrate has been setup successfully")
     jwt.init_app(app)
     logging.info(f"Flask JWT Extended has been setup successfully")
-    register_routes(app)
-    logging.info(f"Routes are registered successfully")
     register_error_handlers(app, jwt)
     logging.info(f"Error handlers are registered successfully")
+    register_routes(app)
+    logging.info(f"Routes are registered successfully")
+    register_security_matcher(app)
+    logging.info(f"Security matcher is registered successfully")
     return app
